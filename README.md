@@ -1,3 +1,5 @@
-![snake-kaboom](learn/kaboom.png)
+# snake-kaboom
 
-Welcome! Kaboom is a JavaScript library that helps you make games fast and fun :D
+Snake game based on Kaboom Replit tutorial. 
+
+[Play Game Demo](https://snake-kaboom.diegoqueres81.repl.co/)

@@ -2914,6 +2914,25 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
 
   // code/main.js
   no();
+  loadSprite("pizza", "sprites/pizza.png");
+  loadSprite("background", "sprites/background.png");
+  loadSprite("fence-bottom", "sprites/fence-bottom.png");
+  loadSprite("fence-left", "sprites/fence-left.png");
+  loadSprite("fence-right", "sprites/fence-right.png");
+  loadSprite("fence-top", "sprites/fence-top.png");
+  loadSprite("post-bottom-left", "sprites/post-bottom-left.png");
+  loadSprite("post-bottom-right", "sprites/post-bottom-right.png");
+  loadSprite("post-top-left", "sprites/post-top-left.png");
+  loadSprite("post-top-right", "sprites/post-top-right.png");
+  loadSprite("snake-skin", "sprites/snake-skin.png");
+  layers([
+    "background",
+    "game"
+  ], "game");
+  add([
+    sprite("background"),
+    layer("background")
+  ]);
   var block_size = 20;
   var directions = {
     UP: "up",
@@ -2927,46 +2946,79 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
   var snake_body = [];
   var food = null;
   var map = addLevel([
-    "==============",
-    "=            = ",
-    "=            = ",
-    "=            = ",
-    "=            = ",
-    "=            = ",
-    "=            = ",
-    "=            = ",
-    "=            = ",
-    "=            = ",
-    "=            = ",
-    "=            = ",
-    "=            = ",
-    "=============="
+    "1tttttttttttt2",
+    "l            r ",
+    "l            r ",
+    "l            r ",
+    "l            r ",
+    "l            r ",
+    "l            r ",
+    "l            r ",
+    "l            r ",
+    "l            r ",
+    "l            r ",
+    "l            r ",
+    "l            r ",
+    "3bbbbbbbbbbbb4"
   ], {
     width: block_size,
     height: block_size,
     pos: vec2(0, 0),
-    "=": () => [
-      rect(block_size, block_size),
-      color(255, 0, 0),
+    "t": () => [
+      sprite("fence-top"),
+      area(),
+      "wall"
+    ],
+    "b": () => [
+      sprite("fence-bottom"),
+      area(),
+      "wall"
+    ],
+    "l": () => [
+      sprite("fence-left"),
+      area(),
+      "wall"
+    ],
+    "r": () => [
+      sprite("fence-right"),
+      area(),
+      "wall"
+    ],
+    "1": () => [
+      sprite("post-top-left"),
+      area(),
+      "wall"
+    ],
+    "2": () => [
+      sprite("post-top-right"),
+      area(),
+      "wall"
+    ],
+    "3": () => [
+      sprite("post-bottom-left"),
+      area(),
+      "wall"
+    ],
+    "4": () => [
+      sprite("post-bottom-right"),
       area(),
       "wall"
     ]
   });
   function respawn_snake() {
-    destroyAll("snake");
+    snake_body.forEach((segment) => {
+      destroy(segment);
+    });
     snake_body = [];
     snake_length = 3;
     for (let i = 1; i <= snake_length; i++) {
-      let segment = add([
-        rect(block_size, block_size),
+      snake_body.push(add([
+        sprite("snake-skin"),
         pos(block_size, block_size * i),
-        color(0, 0, 255),
         area(),
         "snake"
-      ]);
-      snake_body.push(segment);
+      ]));
     }
-    ;
     current_direction = directions.RIGHT;
   }
   __name(respawn_snake, "respawn_snake");
@@ -2978,8 +3030,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     if (food)
       destroy(food);
     food = add([
-      rect(block_size, block_size),
-      color(0, 255, 0),
+      sprite("pizza"),
       pos(new_pos),
       area(),
       "food"
@@ -3047,9 +3098,8 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     }
     let snake_head = snake_body[snake_body.length - 1];
     snake_body.push(add([
-      rect(block_size, block_size),
+      sprite("snake-skin"),
       pos(snake_head.pos.x + move_x, snake_head.pos.y + move_y),
-      color(0, 0, 255),
       area(),
       "snake"
     ]));

@@ -15,6 +15,7 @@ let current_direction = directions.RIGHT;
 let run_action = false;
 let snake_length = 3;
 let snake_body = [];
+let food = null;
 
 const map = addLevel([
   "==============",
@@ -63,10 +64,30 @@ function respawn_snake(){
   current_direction = directions.RIGHT;
 }
 
+function respawn_food() {
+  let new_pos = rand(vec2(1,1), vec2(13,13));
+  new_pos.x = Math.floor(new_pos.x);
+  new_pos.y = Math.floor(new_pos.y);
+  new_pos = new_pos.scale(block_size);
+
+  if (food)
+    destroy(food);
+
+  food = add([
+    rect(block_size, block_size),
+    color(0,255,0),
+    pos(new_pos),
+    area(),
+    "food"
+  ]);
+  
+}
+
 function respawn_all(){
   run_action = false;
     wait(0.5, function(){
         respawn_snake();
+        respawn_food();
         run_action = true;
     });
 
@@ -147,3 +168,11 @@ onUpdate(()=> {
   }
 
 });
+
+onCollide("snake", "food", (s, f) => {
+  snake_length++;
+  respawn_food();
+});
+
+
+

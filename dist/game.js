@@ -2925,6 +2925,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
   var run_action = false;
   var snake_length = 3;
   var snake_body = [];
+  var food = null;
   var map = addLevel([
     "==============",
     "=            = ",
@@ -2969,10 +2970,27 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     current_direction = directions.RIGHT;
   }
   __name(respawn_snake, "respawn_snake");
+  function respawn_food() {
+    let new_pos = rand(vec2(1, 1), vec2(13, 13));
+    new_pos.x = Math.floor(new_pos.x);
+    new_pos.y = Math.floor(new_pos.y);
+    new_pos = new_pos.scale(block_size);
+    if (food)
+      destroy(food);
+    food = add([
+      rect(block_size, block_size),
+      color(0, 255, 0),
+      pos(new_pos),
+      area(),
+      "food"
+    ]);
+  }
+  __name(respawn_food, "respawn_food");
   function respawn_all() {
     run_action = false;
     wait(0.5, function() {
       respawn_snake();
+      respawn_food();
       run_action = true;
     });
   }
@@ -3039,6 +3057,10 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       let tail = snake_body.shift();
       destroy(tail);
     }
+  });
+  onCollide("snake", "food", (s, f2) => {
+    snake_length++;
+    respawn_food();
   });
 })();
 //# sourceMappingURL=game.js.map
